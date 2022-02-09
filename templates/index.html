@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Table 01</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+</head>
+<body>
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center mb-5">
+                <h2 class="heading-section">LIVE STREAMS</h2>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center mb-5">
+                <a href="{{url_for('start_stream')}}">Create New LiveStream</a>
+            </div>
+        </div>
+        <!--        LiveStreams Table-->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead class="thead-primary">
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Stream_id</th>
+                            <th scope="col">Playback_id</th>
+                            <th scope="col">Stream_key</th>
+                            <th scope="col">Date_created</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for livestream in livestreams %}
+                        <tr>
+
+                            <th scope="row">{{ livestream.id }}</th>
+                            <td>{{ livestream.live_stream_id[:5]+"...." }}</td>
+                            <td>{{ livestream.play_back_id[:5]+"...." }}</td>
+                            <td>{{ livestream.stream_key }}</td>
+                            <td>{{ livestream.date_created }}</td>
+                            <td>
+                                <a href="{{ url_for('play_stream',playback_id=livestream.play_back_id) }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                         fill="currentColor"
+                                         class="bi bi-play"
+                                         viewBox="0 0 16 16">
+                                        <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/>
+                                    </svg>
+                                </a>
+                                <a type="button" data-url="{{livestream.id}}" class="btn btn-info btn-sm btn_simulcast" data-toggle="modal"
+                                   data-target="#myModal">Simulcast
+                                </a>
+                                <a href="{{ url_for('delete_stream',id=livestream.live_stream_id) }}">Delete</a>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br><br><br><br>
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center mb-5">
+                <h2 class="heading-section">SIMULCASTS</h2>
+            </div>
+        </div>
+        <!--        Simulcasts Table-->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead class="thead-primary">
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Live_Stream_ID</th>
+                            <th scope="col">Url</th>
+                            <th scope="col">Stream Key</th>
+                            <th scope="col">Simulcast ID</th>
+                            <th scope="col">Date_created</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for simulcast in simulcasts %}
+                        <tr>
+
+                            <th scope="row">{{ simulcast.id }}</th>
+                            <td>{{ simulcast.livestream_id }}</td>
+                            <td>{{ simulcast.url }}</td>
+                            <td>{{ simulcast.stream_key }}</td>
+                            <td>{{ simulcast.simulcast_id[:5]+"...." }}</td>
+                            <td>{{ simulcast.date_created }}</td>
+                            <td>
+                                <a href="{{ url_for('delete_simulcast',id=simulcast.id) }}">Delete</a>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Create Simulcast</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <form id="simulcast" action="/simulcast" method="post">
+                    <div class="modal-body">
+                        <h5>Live Stream ID</h5>
+                        <div class="stream_id"></div>
+<!--                        <input type="text" id="stream_id" class="stream_id" name="stream_id" disabled>-->
+                        <h5>URL</h5>
+                        <input type="text" id="url" name="url" placeholder="url">
+                        <br><br>
+                        <h5>STREAM KEY</h5>
+                        <input type="text" id="stream_key" name="stream_key" placeholder="stream_key">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" >Submit</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+<script>
+    $('.btn_simulcast').on("click", function () {
+        let btn = $(this);
+        let url = btn.attr('data-url');
+        console.log(url)
+        let model = $('#myModal');
+        let stream_id = model.find('.stream_id')
+
+
+        stream_id.html(`<input type="text" id="live_stream_id" name="live_stream_id" value="${url}" readonly>`)
+
+
+    })
+</script>
+
+<!--<script src="js/jquery.min.js"></script>-->
+<!--<script src="js/popper.js"></script>-->
+<!--<script src="js/bootstrap.min.js"></script>-->
+<!--<script src="js/main.js"></script>-->
+
+</body>
+</html>
+
